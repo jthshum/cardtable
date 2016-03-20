@@ -13,6 +13,7 @@
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
         <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+        <script src="js/vendor/pixi.js"></script>
     </head>
     <body>
         <!--[if lt IE 8]>
@@ -22,6 +23,43 @@
         <!-- Add your site or application content here -->
         <p>Hello world! This is HTML5 Boilerplate.</p>
 
+        <script>
+            var renderer = PIXI.autoDetectRenderer(800, 600,{backgroundColor : 0x1099bb});
+            document.body.appendChild(renderer.view);
+
+            // create the root of the scene graph
+            var stage = new PIXI.Container();
+
+            // create a texture from an image path
+            var texture = PIXI.Texture.fromImage('assets/card.png');
+
+            // create a new Sprite using the texture
+            var card = new PIXI.Sprite(texture);
+
+            // center the sprite's anchor point
+            card.anchor.x = 0.5;
+            card.anchor.y = 0.5;
+
+            // move the sprite to the center of the screen
+            card.position.x = 200;
+            card.position.y = 150;
+            card.scale.x = 0.1;
+            card.scale.y = 0.1;
+
+            stage.addChild(card);
+
+            // start animating
+            animate();
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // just for fun, let's rotate mr rabbit a little
+                card.rotation += 0.1;
+
+                // render the container
+                renderer.render(stage);
+            }
+        </script>
         <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.12.0.min.js"><\/script>')</script>
         <script src="js/plugins.js"></script>
