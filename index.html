@@ -105,8 +105,8 @@
                 card.interactive = true;
                 card
                     // events for drag start
-                    .on('mousedown', onDragStart)
-                    .on('touchstart', onDragStart)
+                    .on('mousedown', createDragStartHandler(card))
+                    .on('touchstart', createDragStartHandler(card))
                     // events for drag end
                     .on('mouseup', onDragEnd)
                     .on('mouseupoutside', onDragEnd)
@@ -153,14 +153,20 @@
                 renderer.render(stage);
             }
 
-            function onDragStart(event)
-            {
-                // store a reference to the data
-                // the reason for this is because of multitouch
-                // we want to track the movement of this particular touch
-                this.data = event.data;
-                this.alpha = 0.5;
-                this.dragging = true;
+            function createDragStartHandler(card) {
+                return function(event)
+                {
+                    // store a reference to the data
+                    // the reason for this is because of multitouch
+                    // we want to track the movement of this particular touch
+                    this.data = event.data;
+                    this.alpha = 0.5;
+                    this.dragging = true;
+
+                    // track the mouse position when dragging started
+                    this.sx = this.data.getLocalPosition(card).x * card.scale.x;
+                    this.sy = this.data.getLocalPosition(card).y * card.scale.y;
+                }
             }
 
             function onDragEnd()
@@ -178,8 +184,8 @@
                 if (this.dragging)
                 {
                     var newPosition = this.data.getLocalPosition(this.parent);
-                    this.position.x = newPosition.x;
-                    this.position.y = newPosition.y;
+                    this.position.x = newPosition.x - this.sx;
+                    this.position.y = newPosition.y - this.sy;
                 }
             }
           //  function onButtonOver()
