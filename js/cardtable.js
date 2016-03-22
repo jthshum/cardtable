@@ -64,9 +64,9 @@ function onMouseOut() {
     this.tint = 0xFFFFFF;
 }
 
-function createCard(texture, x, y) {
+function createCard(x, y) {
     // Create a new Sprite using the texture
-    var card = new PIXI.Sprite(texture);
+    var card = new PIXI.Sprite.fromFrame(Math.floor(Math.random() * 8 + 2) + "_of_clubs.png");
 
     card.buttonMode = true; // Show hand cursor on hover
     card.interactive = true;
@@ -107,17 +107,19 @@ function loadCardTable(options) {
 
     stage = createEmptyStage();
 
-    // Create the card texture
-    var texture = PIXI.Texture.fromImage('assets/card.png');
+    PIXI.loader
+          .add('assets/cards.json')
+          .load(function() {
+      // Keep track of our cards so we can iterate over them later
+      stage.cards = [];
+      for (var i = 0; i < 10; i++)
+      {
+          card = createCard(Math.floor(Math.random() * 800), Math.floor(Math.random() * 600));
+          stage.cards.push(card);
+          stage.addChild(card);
+      }
+    });
 
-    // Keep track of our cards so we can iterate over them later
-    stage.cards = [];
-    for (var i = 0; i < 10; i++)
-    {
-        card = createCard(texture, Math.floor(Math.random() * 800), Math.floor(Math.random() * 600));
-        stage.cards.push(card);
-        stage.addChild(card);
-    }
 
     function animate() {
         requestAnimationFrame(animate);
