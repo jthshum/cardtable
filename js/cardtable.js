@@ -94,7 +94,7 @@ function createCard(x, y) {
     card.position.x = x;
     card.position.y = y;
     card.width = 100;
-    card.height = 125;
+    card.height = 145;
 
     return card;
 }
