@@ -68,23 +68,23 @@ function createCard(texture, x, y) {
     var card = new PIXI.Sprite(texture);
 
     card.buttonMode = true; // Show hand cursor on hover
-    card.interactive = true;
-
-    card
-        // events for drag start
-        .on('mousedown', createDragStartHandler(card))
-        .on('touchstart', createDragStartHandler(card))
-        // events for drag end
-        .on('mouseup', onDragEnd)
-        .on('mouseupoutside', onDragEnd)
-        .on('touchend', onDragEnd)
-        .on('touchendoutside', onDragEnd)
-        // events for drag move
-        .on('mousemove', onDragMove)
-        .on('touchmove', onDragMove)
-        // events for mouseover
-        .on('mouseover', onMouseOver)
-        .on('mouseout', onMouseOut);
+//    card.interactive = true;
+//
+//    card
+//        // events for drag start
+//        .on('mousedown', createDragStartHandler(card))
+//        .on('touchstart', createDragStartHandler(card))
+//        // events for drag end
+//        .on('mouseup', onDragEnd)
+//        .on('mouseupoutside', onDragEnd)
+//        .on('touchend', onDragEnd)
+//        .on('touchendoutside', onDragEnd)
+//        // events for drag move
+//        .on('mousemove', onDragMove)
+//        .on('touchmove', onDragMove)
+//        // events for mouseover
+//        .on('mouseover', onMouseOver)
+//        .on('mouseout', onMouseOut);
 
     // Center the sprite's anchor point
     card.anchor.set(0.5);
@@ -104,6 +104,17 @@ function loadCardTable(options) {
 
     document.body.appendChild(renderer.view);
 
+    let scale = scaleToWindow(renderer.view);
+    let t = new Tink(PIXI, renderer.view, scale);
+
+    //TINK Pointer
+    pointer = t.makePointer();
+    pointer.x = pointer.x / scale;
+    pointer.y = pointer.y / scale;
+    //pointer.press = () => console.log("The pointer was pressed");
+    //pointer.release = () => console.log("The pointer was released");
+    //pointer.tap = () => console.log("The pointer was tapped");
+
     stage = createEmptyStage();
 
     // Create the card texture
@@ -115,6 +126,13 @@ function loadCardTable(options) {
     for (var i = 0; i < 10; i++)
     {
         card = createCard(texture, Math.floor(Math.random() * 800), Math.floor(Math.random() * 600));
+        t.makeDraggable(card);
+        t.makeInteractive(card);
+        card.press = () => console.log("pressed");
+        card.release = () => console.log("released");
+        card.over = () => console.log("over");
+        card.out = () => console.log("out");
+        card.tap = () => console.log("tapped");
         //stage.cards.push(card);
         stage.addChild(card);
     }
@@ -122,25 +140,25 @@ function loadCardTable(options) {
     function animate() {
         requestAnimationFrame(animate);
 
+        t.update();
         // render the container
         renderer.render(stage);
     }
 
     animate();
-/*
-    window.onresize = function (event){
-        var w = window.innerWidth;
-        var h = window.innerHeight;
-        //this part resizes the canvas but keeps ratio the same
-        renderer.view.style.width = w + "px";
-        renderer.view.style.height = h + "px";
-        //this part adjusts the ratio
-        renderer.resize(w,h);
-        //test
-        basicText.x = window.innerWidth/2 - 50;
-    }*/
+
+//    window.onresize = function (event){
+//        var w = window.innerWidth;
+//        var h = window.innerHeight;
+//        //this part resizes the canvas but keeps ratio the same
+//        renderer.view.style.width = w + "px";
+//        renderer.view.style.height = h + "px";
+//        //this part adjusts the ratio
+//        renderer.resize(w,h);
+//    }
 }
 
 window.onload = function() {
     loadCardTable({ backgroundColor: 0x119955 });
 }
+
