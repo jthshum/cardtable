@@ -23,8 +23,10 @@ function createDragStartHandler(card) {
         this.dragStartTime = Date.now();
 
         // Track the mouse position when dragging started
-        this.sx = this.data.getLocalPosition(card).x * card.scale.x;
-        this.sy = this.data.getLocalPosition(card).y * card.scale.y;
+        this.sx = this.dx = this.data.getLocalPosition(card).x * card.scale.x;
+        this.sy = this.dy = this.data.getLocalPosition(card).y * card.scale.y;
+
+        this.lastLocalPosition = this.data.getLocalPosition(this.parent);
 
         // Bring to front (wtf is life)
         parent = this.parent;
@@ -51,8 +53,28 @@ function onDragMove() {
     if (this.dragging)
     {
         var newPosition = this.data.getLocalPosition(this.parent);
-        this.position.x = newPosition.x - this.sx;
-        this.position.y = newPosition.y - this.sy;
+        var damping = 0.05;
+        var friction = 0.01;
+
+        var comAngle = Math.atan2(this.dy - this.anchor.y * this.scale.y, this.dx - this.anchor.x * this.scale.x);
+        var targetAngle = Math.atan2(newPosition.y - this.lastLocalPosition.y, newPosition.x - this.lastLocalPosition.x);
+
+        var dir = Math.cos(comAngle) * Math.sin(targetAngle) - Math.cos(targetAngle) * Math.sin(comAngle);
+        console.log(dir);
+
+        //if (dir * damping > friction)
+            this.rotation += dir * damping;
+        //this.rotation = (this.rotation - angle) * damping;
+        //console.log(this.rotation, angle);
+        var theta = this.rotation;
+        //console.log();
+
+        this.dx = this.sx * Math.cos(theta) - this.sy * Math.sin(theta);
+        this.dy = this.sx * Math.sin(theta) + this.sy * Math.cos(theta);
+        this.position.x = newPosition.x - this.dx;
+        this.position.y = newPosition.y - this.dy;
+
+        this.lastLocalPosition = newPosition;
     }
 }
 
