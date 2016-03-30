@@ -60,10 +60,12 @@ function onDragMove() {
         var targetAngle = Math.atan2(newPosition.y - this.lastLocalPosition.y, newPosition.x - this.lastLocalPosition.x);
 
         var dir = Math.cos(comAngle) * Math.sin(targetAngle) - Math.cos(targetAngle) * Math.sin(comAngle);
-        console.log(dir);
+        var magnitude = Math.sqrt(Math.pow(newPosition.y - this.lastLocalPosition.y, 2),
+                                  Math.pow(newPosition.x - this.lastLocalPosition.x, 2)) / 50.0;
+        console.log(magnitude);
 
         //if (dir * damping > friction)
-            this.rotation += dir * damping;
+            this.rotation += dir * magnitude;
         //this.rotation = (this.rotation - angle) * damping;
         //console.log(this.rotation, angle);
         var theta = this.rotation;
